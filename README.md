@@ -8,6 +8,7 @@ While [[1](http://doi.org/10.1016/j.future.2015.04.018)] already presented a goo
 Our evaluation is based on _rank biased overlap_ (RBO), as described in [[2](http://doi.org/10.1145/1852102.1852106)].
 
 [1] Dessi, A., & Atzori, M. (2016). A machine-learning approach to ranking RDF properties. Future Generation Computer Systems, 54, 366–377. http://doi.org/10.1016/j.future.2015.04.018
+
 [2] Webber, W., Moffat, A., & Zobel, J. (2010). A similarity measure for indefinite rankings. ACM Transactions on Information Systems, 28(4), 1–38. http://doi.org/10.1145/1852102.1852106
 
 ### Implementation
