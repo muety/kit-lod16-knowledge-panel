@@ -1,3 +1,5 @@
+/* Based on https://github.com/holmberd/js-rbo, modified by mail@ferdinand-muetsch.de */
+
 /**
  * This calculates the Rank Biased Overlap(RBO) for two sorted lists.
  * 
