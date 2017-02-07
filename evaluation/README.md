@@ -1,6 +1,6 @@
 # Linked Open Data Seminar 2016 - Knowledge Panel
 ## Evaluation
-### Prerequsites
+### Prerequisites
 - NodeJS (recommendable is version > 6.x)
 
 ### Usage
