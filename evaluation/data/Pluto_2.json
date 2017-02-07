@@ -1,0 +1,19 @@
+[
+    "http://dbpedia.org/ontology/wikiPageExternalLink",
+    "http://dbpedia.org/ontology/wikiPageRevisionID",
+    "http://dbpedia.org/ontology/abstract",
+    "http://dbpedia.org/ontology/wikiPageID",
+    "http://dbpedia.org/property/albedo",
+    "http://dbpedia.org/property/discoverer",
+    "http://dbpedia.org/property/name",
+    "http://dbpedia.org/property/minTemp",
+    "http://dbpedia.org/property/epoch",
+    "http://dbpedia.org/property/maxTemp",
+    "http://dbpedia.org/property/aphelion",
+    "http://dbpedia.org/ontology/thumbnail",
+    "http://dbpedia.org/property/meanTemp",
+    "http://dbpedia.org/property/discovered",
+    "http://dbpedia.org/property/avgSpeed",
+    "http://dbpedia.org/property/magnitude",
+    "http://dbpedia.org/property/perihelion"
+]

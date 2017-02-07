@@ -1,0 +1,16 @@
+Aspirin: 0.48
+Barack Obama: 0.54
+Chicago: 0.32
+Hudson River: 0.32
+Hummingbird: 0.61
+Italy: 0.45
+Marie Curie: 0.68
+Microsoft: 0.51
+Mount Everest: 0.58
+Pluto: 0.51
+
+---
+
+DBP ratio: 0.75
+Yago ratio: 0.15
+Other ratio: 0.10

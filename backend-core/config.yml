@@ -1,0 +1,63 @@
+baseUri: http://0.0.0.0:8080/
+
+app:
+  sparql:
+    customPrefixes:
+      kit: http://kit.edu/lod16#
+
+    endpoints:
+      #dbp: http://aifb-ls3-vm8.aifb.kit.edu:8901/sparql
+      dbp: https://dbpedia.org/sparql
+      yago: http://linkeddata1.calcul.u-psud.fr/sparql
+
+    resourceIdPatterns:
+      dbp: http://dbpedia.org/resource/
+      yago: http://yago-knowledge.org/resource/
+
+    prefixes:
+      http://dbpedia.org/resource/: "dbr:"
+      http://dbpedia.org/ontology/: "dbo:"
+      http://dbpedia.org/property/: "dbp:"
+      http://schema.org/: "so:"
+      http://www.w3.org/2004/02/skos/core#: "skos:"
+      http://www.w3.org/1999/02/22-rdf-syntax-ns#: "rdf:"
+      http://www.w3.org/2000/01/rdf-schema#: "rdfs:"
+      http://www.w3.org/2002/07/owl#: "owl:"
+      http://www.w3.org/ns/prov#: "prov:"
+      http://xmlns.com/foaf/0.1/: "foaf:"
+      http://yago-knowledge.org/resource/: "yr:"
+      http://purl.org/dc/terms/: "dct:"
+      http://purl.org/dc/elements/: "dce:"
+      http://www.w3.org/2003/01/geo/wgs84_pos#: "geopos:"
+      http://www.georss.org/georss/: "georss:"
+
+  data:
+    propertyFrequencies:
+      yago: ./data/yago_npf.json
+      dbp: ./data/dbp_npf.json
+
+    classFrequencies:
+      yago: ./data/yago_cf.json
+      dbp: ./data/dbp_cf.json
+
+    blacklist:
+      - http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+      - http://www.w3.org/2002/07/owl#sameAs
+      - http://www.w3.org/ns/prov#wasDerivedFrom
+      - http://dbpedia.org/ontology/wikiPageRevisionID
+      - http://dbpedia.org/ontology/wikiPageID
+      - http://www.w3.org/2000/01/rdf-schema#label
+      - http://xmlns.com/foaf/0.1/isPrimaryTopicOf
+      - http://purl.org/dc/terms/subject
+      - http://www.w3.org/2000/01/rdf-schema#comment
+      - http://dbpedia.org/ontology/abstract http://xmlns.com/foaf/0.1/name
+      - http://dbpedia.org/property/name
+      - http://dbpedia.org/property/c
+      - http://dbpedia.org/property/h
+      - http://dbpedia.org/property/hasPhotoCollection
+      - http://purl.org/dc/elements/1.1/description
+      - http://dbpedia.org/property/shortDescription
+      - http://www.w3.org/2004/02/skos/core#prefLabel
+      - http://yago-knowledge.org/resource/redirectedFrom
+      - http://dbpedia.org/ontology/wikiPageExternalLink
+      - http://yago-knowledge.org/resource/wasCreatedOnDate

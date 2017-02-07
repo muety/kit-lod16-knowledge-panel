@@ -1,0 +1,14 @@
+[
+    "http://dbpedia.org/ontology/wikiPageExternalLink",
+    "http://dbpedia.org/property/prominenceM",
+    "http://dbpedia.org/ontology/wikiPageID",
+    "http://dbpedia.org/property/range",
+    "http://dbpedia.org/property/firstAscent",
+    "http://dbpedia.org/ontology/elevation",
+    "http://dbpedia.org/property/location",
+    "http://dbpedia.org/property/name",
+    "http://dbpedia.org/ontology/thumbnail",
+    "http://dbpedia.org/property/elevationM",
+    "http://dbpedia.org/ontology/wikiPageRevisionID",
+    "http://dbpedia.org/ontology/abstract"
+]

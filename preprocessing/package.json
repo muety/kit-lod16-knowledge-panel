@@ -1,0 +1,13 @@
+{
+  "name": "lod16-naive-property-ranking",
+  "version": "0.0.1",
+  "description": "Compute ranking of relevant properties for Yago or DBPedia classes.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
+  "license": "MIT",
+  "dependencies": {
+    "sparql-client": "^0.2.0"
+  }
+}

@@ -1,0 +1,22 @@
+[
+    "http://dbpedia.org/ontology/wikiPageExternalLink",
+    "http://dbpedia.org/property/sourceName",
+    "http://dbpedia.org/property/dischargeAverageImperial",
+    "http://dbpedia.org/property/mouthElevationImperial",
+    "http://dbpedia.org/property/sourceLocation",
+    "http://dbpedia.org/property/tributaryRight",
+    "http://dbpedia.org/property/tributaryLeft",
+    "http://dbpedia.org/property/name",
+    "http://dbpedia.org/property/lengthImperial",
+    "http://dbpedia.org/property/state",
+    "http://dbpedia.org/property/mouthName",
+    "http://dbpedia.org/ontology/abstract",
+    "http://dbpedia.org/ontology/thumbnail",
+    "http://dbpedia.org/ontology/wikiPageID",
+    "http://dbpedia.org/property/dischargeMinImperial",
+    "http://dbpedia.org/property/mouthLocation",
+    "http://dbpedia.org/property/dischargeMaxImperial",
+    "http://dbpedia.org/ontology/wikiPageRevisionID",
+    "http://dbpedia.org/property/sourceElevationImperial",
+    "http://dbpedia.org/property/watershedImperial"
+]

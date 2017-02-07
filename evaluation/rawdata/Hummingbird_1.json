@@ -1,0 +1,15 @@
+[
+    "http://dbpedia.org/ontology/abstract",
+    "http://dbpedia.org/ontology/thumbnail",
+    "http://dbpedia.org/property/ordo",
+    "http://dbpedia.org/property/classis",
+    "http://dbpedia.org/property/regnum",
+    "http://dbpedia.org/ontology/class",
+    "http://dbpedia.org/ontology/kingdom",
+    "http://dbpedia.org/ontology/order",
+    "http://dbpedia.org/property/phylum",
+    "http://dbpedia.org/ontology/phylum",
+    "http://dbpedia.org/property/unrankedOrdo",
+    "http://dbpedia.org/property/subclassis",
+    "http://dbpedia.org/property/infraclassis"
+]

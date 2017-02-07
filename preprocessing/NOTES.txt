@@ -1,0 +1,1 @@
+For DBpedia we only take into account classes of dbpedia.org/ontology/ and schema.org/. Therefore the class_properties file for the top 2000 classes only consists of about 300. Especially dbpedia.org/class/yago/ ones are ignored.
