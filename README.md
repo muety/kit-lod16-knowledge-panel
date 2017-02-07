@@ -28,5 +28,6 @@ The project consist of four software components.
 - Han Che
 - Benny Rolle
 - [Ferdinand Mütsch](https://ferdinand-muetsch.de)
+
 ### License
 MIT
