@@ -24,6 +24,8 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -40,14 +42,14 @@ import java.util.stream.StreamSupport;
 @Getter
 @Setter
 public class SparqlQueryService {
-    private static Map<String, SparqlQueryService> instances = new HashMap();
-    private String endpointUrl;
-    private HttpClient httpClient;
+	private static Map<String, SparqlQueryService> instances = new HashMap();
+	private String endpointUrl;
+	private HttpClient httpClient;
 
-    private SparqlQueryService(String endpointUrl) {
-        this.endpointUrl = endpointUrl;
-	    this.httpClient = this.getInsecureHttpClient();
-    }
+	private SparqlQueryService(String endpointUrl) {
+		this.endpointUrl = endpointUrl;
+		this.httpClient = this.getInsecureHttpClient();
+	}
 
 	private static HttpClient getInsecureHttpClient() {
 		try {
@@ -73,47 +75,38 @@ public class SparqlQueryService {
 		}
 	}
 
-    /*
-    Returns the result of a SPARQL SELECT query as a map, where key is a predicate and value a list of objects to that predicate.
-     */
-    public Map<String, Collection<String>> selectPredicateAndObjectBySubject(String entityUrl) {
-        String queryString = generatePrefixQueryString(Prefixes.getReplaceMap())
-                + "SELECT ?p ?o \n"
-                + "WHERE { " + Prefixes.replace(entityUrl) + " ?p ?o . } \n ";
+	public Collection<String> selectObjectBySubjectAndPredicate(String entityUrl, String predicate) {
+		if (!predicate.contains(":")) predicate = "\"" + predicate + "\"";
 
-        try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), QueryFactory.create(queryString), this.httpClient)) {
-            ResultSet results = qexec.execSelect() ;
-            return twoVariableSolutionToMap(results, null, null);
-        }
-        catch (Exception e) {
-	        e.printStackTrace();
-        }
-        return null;
-    }
+		final ParameterizedSparqlString queryString = new ParameterizedSparqlString(
+				generatePrefixQueryString(Prefixes.getReplaceMap()) +
+						"SELECT ?o \n" +
+						"WHERE { ?entity ?predicate ?o }\n"
+		);
 
-    public Collection<String> selectObjectBySubjectAndPredicate(String entityUrl, String predicate) {
-        if (!predicate.contains(":")) predicate = "\"" + predicate + "\"";
+		queryString.setIri("?entity", entityUrl);
+		queryString.setIri("?predicate", predicate);
 
-        String queryString = generatePrefixQueryString(Prefixes.getReplaceMap())
-                + "SELECT ?o \n"
-                + "WHERE { " + Prefixes.replace(entityUrl) + " " + Prefixes.replace(predicate) + " ?o } \n ";
-
-        try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), QueryFactory.create(queryString), this.httpClient)) {
-            ResultSet results = qexec.execSelect() ;
-            return oneVariableSolutionToList(results, null);
-        }
-        catch (Exception e) {
-	        e.printStackTrace();
-        }
-        return null;
-    }
+		try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), queryString.asQuery(), this.httpClient)) {
+			ResultSet results = qexec.execSelect() ;
+			return oneVariableSolutionToList(results, null);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public Collection<String> selectPredicates(String entityUrl) {
-		String queryString = generatePrefixQueryString(Prefixes.getReplaceMap())
-				+ "SELECT ?p \n"
-				+ "WHERE { " + Prefixes.replace(entityUrl) + " ?p ?o . }";
+		final ParameterizedSparqlString queryString = new ParameterizedSparqlString(
+				generatePrefixQueryString(Prefixes.getReplaceMap()) +
+						"SELECT ?p \n" +
+						"WHERE { ?entity ?p ?o }\n"
+		);
 
-		try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), QueryFactory.create(queryString), this.httpClient)) {
+		queryString.setIri("?entity", entityUrl);
+
+		try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), queryString.asQuery(), this.httpClient)) {
 			ResultSet results = qexec.execSelect() ;
 			return LinkedDataUtils.uniqueCollection(oneVariableSolutionToList(results, "p")); // query executor has a problem with DISTICNT :/
 		} catch (Exception e) {
@@ -122,32 +115,41 @@ public class SparqlQueryService {
 		return null;
 	}
 
-    public Collection<String> selectSubjectByPredicateAndObject(String predicate, String object, String literalLanguageKey) {
-        if (!predicate.contains(":")) predicate = "\"" + predicate + "\"";
-        if (!object.contains(":")) object = "\"" + object + "\"";
-        if (literalLanguageKey != null) object = object + "@" + literalLanguageKey;
+	public Collection<String> selectSubjectByPredicateAndObject(String predicate, String object, String literalLanguageKey) {
+		boolean isLiteralObject = !object.contains(":");
+		if (!predicate.contains(":")) predicate = "\"" + predicate + "\"";
 
-        String queryString = generatePrefixQueryString(Prefixes.getReplaceMap())
-                + "SELECT ?s \n"
-                + "WHERE { ?s " + Prefixes.replace(predicate) + " " + Prefixes.replace(object) + "  } \n ";
+		final ParameterizedSparqlString queryString = new ParameterizedSparqlString(
+				generatePrefixQueryString(Prefixes.getReplaceMap()) +
+						"SELECT ?s \n" +
+						"WHERE { ?s ?predicate ?object }\n"
+		);
 
-        try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), QueryFactory.create(queryString), this.httpClient)) {
-            ResultSet results = qexec.execSelect() ;
-            return oneVariableSolutionToList(results, "s");
-        }
-        catch (Exception e) {
-	        e.printStackTrace();
-        }
-        return null;
-    }
+		queryString.setIri("?predicate", Prefixes.replaceInverse(predicate));
+		if (isLiteralObject) {
+			Node ln = NodeFactory.createLiteral(object, literalLanguageKey);
+			queryString.setParam("object", ln);
+		} else {
+			queryString.setIri("?object", Prefixes.replace(object));
+		}
 
-    /*
-    Constructs a graph with one or more triples for each @predicates, where subject is always @entityUrl and object is queried
-    */
-    public void entityConstructSome(String entityUrl, String[] predicates, Writer outStream, RDFFormat format) {
-        String queryString = generatePrefixQueryString(Prefixes.getReplaceMap())
-                + "CONSTRUCT { $CONSTRUCT_TPL$ } \n"
-                + "WHERE { $WHERE_TPL$ }";
+		try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), queryString.asQuery(), this.httpClient)) {
+			ResultSet results = qexec.execSelect() ;
+			return oneVariableSolutionToList(results, "s");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/*
+	Constructs a graph with one or more triples for each @predicates, where subject is always @entityUrl and object is queried
+	*/
+	public void entityConstructSome(String entityUrl, String[] predicates, Writer outStream, RDFFormat format) {
+		String queryString = generatePrefixQueryString(Prefixes.getReplaceMap())
+				+ "CONSTRUCT { $CONSTRUCT_TPL$ } \n"
+				+ "WHERE { $WHERE_TPL$ }";
 
 /*        String whereTpl = new ArrayList<>(Arrays.asList(predicates)).stream()
 		        .filter(s -> s != null)
@@ -160,88 +162,88 @@ public class SparqlQueryService {
 			    .collect(Collectors.joining());*/
 
 		String tpl = new ArrayList<>(Arrays.asList(predicates)).stream()
-			    .filter(s -> s != null)
-			    .map(s -> Prefixes.replace(entityUrl) + " " + Prefixes.replace(s) + " ?o" + Math.abs(s.hashCode()) + " . ")
-			    .collect(Collectors.joining());
+				.filter(s -> s != null)
+				.map(s -> Prefixes.replace(entityUrl) + " " + Prefixes.replace(s) + " ?o" + Math.abs(s.hashCode()) + " . ")
+				.collect(Collectors.joining());
 
-        queryString = queryString.replace("$CONSTRUCT_TPL$", tpl).replace("$WHERE_TPL$", tpl);
-        try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), QueryFactory.create(queryString), this.httpClient)) {
-            Model result = qexec.execConstruct();
-            RDFDataMgr.write(outStream, result, format);
-        }
-        catch (Exception e) {
-        	e.printStackTrace();
-        }
-    }
+		queryString = queryString.replace("$CONSTRUCT_TPL$", tpl).replace("$WHERE_TPL$", tpl);
+		try (QueryExecution qexec = QueryExecutionFactory.sparqlService(getEndpointUrl(), QueryFactory.create(queryString), this.httpClient)) {
+			Model result = qexec.execConstruct();
+			RDFDataMgr.write(outStream, result, format);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    /* Converts results of a SPARQL SELECT query into a map with object bindings for each predicate */
-    public static Map<String, Collection<String>> twoVariableSolutionToMap(final ResultSet results, String predicateKey, String objectKey) {
-        Map<String, Collection<String>> predicateObjectMap = new HashMap();
-        Map<String, String> uri2Prefix = Prefixes.getReplaceMap();
+	/* Converts results of a SPARQL SELECT query into a map with object bindings for each predicate */
+	public static Map<String, Collection<String>> twoVariableSolutionToMap(final ResultSet results, String predicateKey, String objectKey) {
+		Map<String, Collection<String>> predicateObjectMap = new HashMap();
+		Map<String, String> uri2Prefix = Prefixes.getReplaceMap();
 
-        Iterable<QuerySolution> iterable = () -> results;
-        StreamSupport.stream(iterable.spliterator(), false).forEach((QuerySolution qs) -> {
-            String p = qs.get(predicateKey != null ? predicateKey : "p").toString();
-            String o = qs.get(objectKey != null ? objectKey : "o").toString();
+		Iterable<QuerySolution> iterable = () -> results;
+		StreamSupport.stream(iterable.spliterator(), false).forEach((QuerySolution qs) -> {
+			String p = qs.get(predicateKey != null ? predicateKey : "p").toString();
+			String o = qs.get(objectKey != null ? objectKey : "o").toString();
 
-            if (!predicateObjectMap.containsKey(p)) {
-                predicateObjectMap.put(p, new ArrayList<>());
-            }
+			if (!predicateObjectMap.containsKey(p)) {
+				predicateObjectMap.put(p, new ArrayList<>());
+			}
 
-            predicateObjectMap.get(p).add(o);
-        });
+			predicateObjectMap.get(p).add(o);
+		});
 
-        return predicateObjectMap;
-    }
+		return predicateObjectMap;
+	}
 
-    /* Converts results of a SPARQL SELECT query into a list of object bindings */
-    public static Collection<String> oneVariableSolutionToList(final ResultSet results, String objectKey) {
-        Collection<String> objectList = new ArrayList<>();
-        Map<String, String> uri2Prefix = Prefixes.getReplaceMap();
+	/* Converts results of a SPARQL SELECT query into a list of object bindings */
+	public static Collection<String> oneVariableSolutionToList(final ResultSet results, String objectKey) {
+		Collection<String> objectList = new ArrayList<>();
+		Map<String, String> uri2Prefix = Prefixes.getReplaceMap();
 
-        Iterable<QuerySolution> iterable = () -> results;
-        StreamSupport.stream(iterable.spliterator(), false).forEach((QuerySolution qs) -> {
-            String o = qs.get(objectKey != null ? objectKey : "o").toString();
-            objectList.add(o);
-        });
+		Iterable<QuerySolution> iterable = () -> results;
+		StreamSupport.stream(iterable.spliterator(), false).forEach((QuerySolution qs) -> {
+			String o = qs.get(objectKey != null ? objectKey : "o").toString();
+			objectList.add(o);
+		});
 
-        return objectList;
-    }
+		return objectList;
+	}
 
-    public static String generatePrefixQueryString(Map<String, String> prefixes) {
-        return prefixes.entrySet().stream()
-                .map(e -> "PREFIX " + e.getValue() + " <" + e.getKey() + "> \n")
-                .collect(Collectors.joining());
-    }
+	public static String generatePrefixQueryString(Map<String, String> prefixes) {
+		return prefixes.entrySet().stream()
+				.map(e -> "PREFIX " + e.getValue() + " <" + e.getKey() + "> \n")
+				.collect(Collectors.joining());
+	}
 
-    /* Requires full URIs */
-    @Deprecated
-    public String entityToJsonLdString(Map<String, Collection<String>> entity, Map<String, String> prefixes) {
-        String jsonStr = "";
+	/* Requires full URIs */
+	@Deprecated
+	public String entityToJsonLdString(Map<String, Collection<String>> entity, Map<String, String> prefixes) {
+		String jsonStr = "";
 
-        try {
-            Object entityJson = JsonUtils.fromString(new JSONObject(entity).toString());
-            Map context = prefixes == null ? Prefixes.getInverseReplaceMap() : prefixes;
-            Object compact = JsonLdProcessor.compact(entityJson, context, new JsonLdOptions());
-            jsonStr = JsonUtils.toPrettyString(compact);
-        } catch (JsonLdError jsonLdError) {
-            jsonLdError.printStackTrace();
-            return "";
-        } catch (JsonGenerationException e) {
-            e.printStackTrace();
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		try {
+			Object entityJson = JsonUtils.fromString(new JSONObject(entity).toString());
+			Map context = prefixes == null ? Prefixes.getInverseReplaceMap() : prefixes;
+			Object compact = JsonLdProcessor.compact(entityJson, context, new JsonLdOptions());
+			jsonStr = JsonUtils.toPrettyString(compact);
+		} catch (JsonLdError jsonLdError) {
+			jsonLdError.printStackTrace();
+			return "";
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-        return jsonStr;
-    }
+		return jsonStr;
+	}
 
-    public static SparqlQueryService getInstance(String endpointUrl) {
-        if (!instances.containsKey(endpointUrl)) {
-            instances.put(endpointUrl, new SparqlQueryService(endpointUrl));
-        }
-        return instances.get(endpointUrl);
-    }
+	public static SparqlQueryService getInstance(String endpointUrl) {
+		if (!instances.containsKey(endpointUrl)) {
+			instances.put(endpointUrl, new SparqlQueryService(endpointUrl));
+		}
+		return instances.get(endpointUrl);
+	}
 }

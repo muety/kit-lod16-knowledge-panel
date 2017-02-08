@@ -28,15 +28,7 @@ public class Prefixes {
 
 	/* Shortens a long URI like http://dbpedia.org/Karlsruhe/ to dbr:Karlsruhe. */
 	public static String replace(String uri) {
-		return getReplaceMap().keySet().stream().filter(k -> {
-			if (uri == null) {
-				System.out.println(1);
-			}
-			if (k == null) {
-				System.out.println(1);
-			}
-			return uri.contains(k);
-		}).findFirst().map(k -> uri.replace(k, replaceMap.get(k))).orElse(uri);
+		return getReplaceMap().keySet().stream().filter(k -> uri.contains(k)).findFirst().map(k -> uri.replace(k, replaceMap.get(k))).orElse(uri);
 	}
 
 	/* Expands a shorthand URI like dbr:Karlsruhe to http://dbpedia.org/Karlsruhe/ */
