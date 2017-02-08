@@ -4,7 +4,6 @@ import edu.kit.lod16.topic4.Main;
 import edu.kit.lod16.topic4.services.PropertyRankingService;
 import edu.kit.lod16.topic4.services.SparqlQueryService;
 import edu.kit.lod16.topic4.util.LinkedDataUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.jena.riot.RDFFormat;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,7 +40,6 @@ public class ApiRootResource {
     	/* We want the user to be able to type lower case search queries, but still find relevant object. Best way to do so would be
     	do do FILTER(lcase(str(?o)) = "karlsruhe") in the query, but that's extremely expensive. Since "most" of the labels in DBP and Yago
     	are capital case, capitalizing the string is a reasonable heuristic. */
-		q = WordUtils.capitalizeFully(q);
 		if (this.arrayCache.containsKey(q.hashCode() + top)) return this.arrayCache.get(q.hashCode() + top).toString();
 
 		List<String> ranking = this.getCombinedPropertyRanking(q, top, 0);
@@ -59,7 +57,6 @@ public class ApiRootResource {
 			@DefaultValue("10") @QueryParam("top") int top) {
 
 		if (q.isEmpty()) return new JSONObject().toString();
-		q = WordUtils.capitalizeFully(q);
 		if (this.objectCache.containsKey(q.hashCode() + top)) return this.objectCache.get(q.hashCode() + top).toString();
 
 		List<String> ranking;
