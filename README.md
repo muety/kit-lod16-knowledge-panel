@@ -2,9 +2,9 @@
 
 ### Description
 This is a project in the context of the _Linked Open Data_ (LOD) Seminar at [AIFB](http://aifb.kit.edu) at the [Karlsruhe Institute of Technology](http://kit.edu). 
-Goal was basically to integrate multiple LOD sources (in a first step only [DBPedia](http://dbpedia.org) and [Yago](http://yago-knowledge.org)) to build a knowledge pabel or fact box (as known from Google or Wikipedia) on that basis. 
-A major challange was how to determine which properties of an entity, e.g. [dbp:Karlsruhe](https://dbpedia.org/resource/Karlsruhe) are relevant and meaningful to be displayed to the user and which are not. Accordingly, a ranking of properties for specific entities or classes (`rdf:type`) of entities had to be elaborated, which is capable of ranking properties among multiple, distinct sources.
-While [[1](http://doi.org/10.1016/j.future.2015.04.018)] already presented a good solution (although only working for one dataset, namely DBPedia) based on supervised machine learning, our approach is based of rather naive statistical metrics like [TD-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf).
+Goal was basically to integrate multiple LOD sources (in a first step only [DBPedia](http://dbpedia.org) and [Yago](http://yago-knowledge.org)) to build a knowledge panel or fact box (as known from Google or Wikipedia) on that basis. 
+A major challenge was how to determine which properties of an entity, e.g. [dbp:Karlsruhe](https://dbpedia.org/resource/Karlsruhe) are relevant and meaningful to be displayed to the user and which are not. Accordingly, a ranking of properties for specific entities or classes (`rdf:type`) of entities had to be elaborated, which is capable of ranking properties among multiple, distinct sources.
+While [[1](http://doi.org/10.1016/j.future.2015.04.018)] already presented a good solution (although only working for one dataset, namely DBPedia) based on supervised machine learning, our approach is based of rather naive statistical metrics like [TF-IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf).
 Our evaluation is based on _rank biased overlap_ (RBO), as described in [[2](http://doi.org/10.1145/1852102.1852106)].
 
 [1] Dessi, A., & Atzori, M. (2016). A machine-learning approach to ranking RDF properties. Future Generation Computer Systems, 54, 366–377. http://doi.org/10.1016/j.future.2015.04.018
