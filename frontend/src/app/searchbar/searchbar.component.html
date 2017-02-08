@@ -1,0 +1,18 @@
+<nav>
+	<form (keydown)="submit($event)">
+		<ul id="dropdown1" class="dropdown-content">
+			<li *ngFor="let property of properties"><a (click)="setProperty(property)">{{property}}</a></li>
+		</ul>
+		<div class="nav-wrapper blue darken-1">
+			<div class="input-field" style="width: 70%">
+				<input id="search" type="search" required [(ngModel)]="query" [ngModelOptions]="{standalone: true}">
+				<label for="search" (click)="clickSearch()"><i class="material-icons">search</i></label>
+				<i class="material-icons">close</i>
+			</div>
+			<ul class="right" style="width:30%; position: absolute; top:0; right:0;">
+				<!-- Dropdown Trigger -->
+				<li style="width: 100%;"><a class="dropdown-button" href="#!" data-activates="dropdown1">Properties({{seletectedProperties}})<i class="material-icons right">arrow_drop_down</i></a></li>
+			</ul>
+		</div>
+	</form>
+</nav>

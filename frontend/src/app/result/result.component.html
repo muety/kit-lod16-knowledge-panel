@@ -1,0 +1,60 @@
+<div class="card" *ngIf="result" >
+	<div *ngIf="image.length!=0" class="card-image waves-effect waves-block waves-light">
+		<img class="activator" src="{{image[0]}}" style="max-height: 300px">
+	</div>
+	<div class="card-content">
+		<div class="flags">
+			<a class="change-language-icon" *ngFor="let flag of resultAbstracts" (click)="changeLanguage(flag)"><span
+				class="flag-icon {{getFlagCss(flag['@language'])}}"></span></a>
+		</div>
+		<span class="card-title activator grey-text text-darken-4">{{id}}<i
+			class="material-icons right">more_vert</i></span>
+		<p>{{abstractText}}</p>
+	</div>
+	<div class="card-reveal">
+		<div class="flags">
+			<a class="change-language-icon" *ngFor="let flag of resultAbstracts" (click)="changeLanguage(flag)"><span
+				class="flag-icon {{getFlagCss(flag['@language'])}}"></span></a>
+		</div>
+		<span class="card-title grey-text text-darken-4">{{id}}<i class="material-icons right">close</i></span>
+		<table>
+			<thead>
+			<tr>
+				<div class="switch-table">
+					<th class="switch-table-label" data-field="id">Data</th>
+					<th class="switch-table-content" data-field="name">Value</th>
+				</div>
+
+			</tr>
+			</thead>
+
+			<tbody>
+			<tr *ngFor="let item of result" [ngSwitch]="item.valueType">
+				<div *ngSwitchCase="'object'">
+					<div class="switch-table" [ngSwitch]="item.key">
+						<div *ngSwitchCase="'abstract'">
+							<td class="switch-table-label">{{item.key | appCamelCaseSplitter}}</td>
+							<td class="switch-table-content">{{abstractTextFull}}</td>
+						</div>
+						<div class="switch-table" *ngSwitchCase="'name'">
+							<td class="switch-table-label">{{item.key | appCamelCaseSplitter}}</td>
+							<td class="switch-table-content">{{item.value['@value'] || item.value[0]['@value']}}</td>
+						</div>
+						<div class="switch-table" *ngSwitchDefault>
+							<td class="switch-table-label">{{item.key | appCamelCaseSplitter}}</td>
+							<td class="switch-table-content">{{item.value[0] || item.value['@value'] || item.value['kit'] }}</td>
+						</div>
+					</div>
+
+				</div>
+				<div class="switch-table" *ngSwitchDefault>
+					<td class="switch-table-label">{{item.key | appCamelCaseSplitter}}</td>
+					<td class="switch-table-content" *ngIf="item.isUrl"><a href="{{item.value}}">Link</a></td>
+					<td class="switch-table-content" *ngIf="!item.isUrl">{{item.value}}</td>
+				</div>
+
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,0 +1,26 @@
+.change-language-icon:hover{
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+
+}
+
+
+.change-language-icon{
+	transition: .3s ease-out;
+	transition-property: initial;
+	transition-duration: 0.3s;
+	transition-timing-function: ease-out;
+	transition-delay: initial;
+}
+
+.switch-table{
+	display: table;
+	width:100%;
+}
+
+.switch-table-label{
+	width: 20%;
+}
+
+.switch-table-content{
+	width: 79%;
+}
